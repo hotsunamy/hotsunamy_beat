@@ -1,0 +1,107 @@
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+
+
+<body>
+    <div class = "card_grid">
+        <div class="card">
+            <div class="song_thumb">
+                <img class="song_photo" src="cortis.jpeg" alt="Cortis">
+                <button data-src="fason_rmx.mp3">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+            <p class="song_name">Fashon rmx  </p>
+            </div>
+        <div class="card">
+            <div class="song_thumb">
+                <img class="song_photo" src="remi.jpeg" alt="Remi">
+                <button data-src="katy.mp3">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+            <p class="song_name">Doremifasolasi</p>
+        </div>
+        <div class="card">
+            <div class="song_thumb">
+                <img class="song_photo" src="son_tung.jpg" alt="MTP">
+                <button data-src="nang_am_xa_dan.mp3">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+            <p class="song_name">Come my way</p>
+        </div>
+        <div class="card">
+            <div class="song_thumb">
+                <img class="song_photo" src="travis.jpg" alt="Travis">
+                <button data-src="ntn.mp3">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+            <p class="song_name">Sicko mode</p>
+        </div>
+    </div>
+    <div id="media_bar">
+        <button id="btn_play">⏸</button>
+        <span id="now_playing">Chưa phát bài nào</span>
+        <span id="time_display">0:00 / 0:00</span>
+        <input type="range" id="seek_bar" value="0" min="0" max="100">
+        <input type="range" id="volume_bar" value="100" min="0" max="100">
+        <audio id="audio_player"></audio>
+    </div>
+
+    <script src="navbar.js"></script>
+    <script>
+        const audio = document.getElementById('audio_player');
+        const btnPlay = document.getElementById('btn_play');
+        const nowPlaying = document.getElementById('now_playing');
+        const seekBar = document.getElementById('seek_bar');
+        const volumeBar = document.getElementById('volume_bar');
+        const timeDisplay = document.getElementById('time_display');
+
+        const songs = Array.from(document.querySelectorAll('.song_thumb button'));
+        let currentIndex = -1;
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function playSong(index) {
+            currentIndex = index;
+            const src = songs[index].getAttribute('data-src');
+            const name = songs[index].closest('.card').querySelector('.song_name').textContent;
+            audio.src = src;
+            audio.play();
+            nowPlaying.textContent = name;
+            btnPlay.textContent = '⏸';
+        }
+
+        songs.forEach((button, index) => {
+            button.addEventListener('click', () => playSong(index));
+        });
+
+        btnPlay.addEventListener('click', () => {
+            if (audio.paused) { audio.play(); btnPlay.textContent = '⏸'; }
+            else { audio.pause(); btnPlay.textContent = '▶'; }
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            seekBar.value = (audio.currentTime / audio.duration) * 100 || 0;
+            timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration || 0)}`;
+        });
+
+        seekBar.addEventListener('input', () => {
+            audio.currentTime = (seekBar.value / 100) * audio.duration;
+        });
+
+        volumeBar.addEventListener('input', () => {
+            audio.volume = volumeBar.value / 100;
+        });
+    </script>
+</body>
